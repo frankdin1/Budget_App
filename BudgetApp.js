@@ -23,9 +23,34 @@
  // })(firstController);
 
 //Budget Controller
-var firstController = (function(){
+var budgetController = (function(){
 
-	
+	var Expense = function(id, description, value){
+		this.id = id;
+		this.description = description;
+		this.value = value;
+	};
+
+	var Income = function(id, description, value){
+		this.id = id;
+		this.description = description;
+		this.value = value;
+	};
+
+	var data = {
+
+		//these arrays store all the expense and income items
+		allItems: {
+			exp: [],
+			inc: []
+		},
+
+		//these variables store the totals of the income and expense 
+		totals:{
+			exp: 0,
+			inc: 0
+		}
+	}
  
 })();
 
@@ -59,6 +84,20 @@ var UIController = (function(){
 
 var secondController = (function(budgetCtrl, UICtrl){
 	
+	var createEventListeners = function(){
+
+			document.querySelector(DOM.inputButton).addEventListener('click', ctrlAddItem);
+			ctrlAddItem();
+
+			document.addEventListener('keypress', function(event){
+
+			if (event.keyCode === 13 || event.which === 13){//keyCode works on recent browsers while 'which' works on older browsers
+				ctrlAddItem();
+			}
+			// console.log(event);
+		});
+	}
+
 	var DOM = UICtrl.getDOMStrings();//this adds the DOMstrings object to this private function
 
 	var ctrlAddItem = function(){
@@ -77,15 +116,13 @@ var secondController = (function(budgetCtrl, UICtrl){
 		//5. Display budget on UI
 	}
 
-	document.querySelector(DOM.inputButton).addEventListener('click', ctrlAddItem);
-		ctrlAddItem();
-
-	document.addEventListener('keypress', function(event){
-
-		if (event.keyCode === 13 || event.which === 13){//keyCode works on recent browsers while 'which' works on older browsers
-			ctrlAddItem();
+	return {
+		init: function(){
+			console.log("Application has started");
+			createEventListeners();
 		}
-		// console.log(event);
-	});
+	};
 
 })(firstController, UIController);
+
+secondController.init();
