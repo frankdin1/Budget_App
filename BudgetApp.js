@@ -89,7 +89,9 @@ var UIController = (function(){
 		inputType: '.add__type',
 		inputDescription: '.add__description',
 		inputValue: '.add__value',
-		inputButton: '.add__btn'
+		inputButton: '.add__btn',
+		incomeContainer:'.income__list',
+		expenseContainer:'.expenses__list'
 	}
 
 	return{
@@ -100,6 +102,27 @@ var UIController = (function(){
 				value: document.querySelector(DOMStrings.inputValue).value
 			}
 			
+		},
+
+		addListItem: function(obj, type){
+			var html, newHtml, element;
+			//Create HTML string with placeholder text
+			if (type === 'inc'){
+				element = DOMStrings.incomeContainer;
+				html = '<div class="item clearfix" id="income-%id%"> <div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
+			}
+			else if (type === 'exp'){
+				element = DOMStrings.expenseContainer;
+				html = '<div class="item clearfix" id="income-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
+			}
+
+			//Replace placeholder text with actual data
+			newHtml = html.replace('%id%', obj.id);//since the var html is a string, we use string methods on it
+			newHtml = newHtml.replace('%description%', obj.description);//if we use the same line as above, it will override the instruction to chnge the id placeholder and will just change the description placeholder
+			newHtml = newHtml.replace('%value%', obj.value);//the new Html var adds more html to what we already had previously
+
+			//Insert data into the DOM
+			document.querySelector(element).insertAdjacentHTML("beforeend", newHtml);
 		},
 
 		//this is an object to make the inputs object public
@@ -113,7 +136,9 @@ var UIController = (function(){
 var secondController = (function(budgetCtrl, UICtrl){
 	
 	var createEventListeners = function(){
+		var input, addItem;
 
+		input = UICtrl.getInput()
 			document.querySelector(DOM.inputButton).addEventListener('click', ctrlAddItem);
 			ctrlAddItem();
 
@@ -124,6 +149,8 @@ var secondController = (function(budgetCtrl, UICtrl){
 			}
 			// console.log(event);
 		});
+
+		// UICtrl.addListItem(addItem, input.type).html = 'Hello';
 	}
 
 	var DOM = UICtrl.getDOMStrings();//this adds the DOMstrings object to this private function
@@ -133,11 +160,13 @@ var secondController = (function(budgetCtrl, UICtrl){
 
 		//1. Get the field input data
 		input = UICtrl.getInput();
-		console.log(input);
+		//console.log(input);
 
 		//2. Add item to budget controller
 		addItem = budgetCtrl.addItem(input.type, input.description, input.value);
+		
 		//3. Add item to the UI
+		UICtrl.addListItem(addItem, input.type)
 		// if(input.type === "inc"){
 		// 	document.querySelector('.item__description').innerHTML = input.description;
 		// 	document.querySelector('.item__description').innerHTML = input.description;
