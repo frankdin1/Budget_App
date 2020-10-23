@@ -128,6 +128,19 @@ var UIController = (function(){
 		//this is an object to make the inputs object public
 		getDOMStrings: function(){
 			return DOMStrings;
+		},
+
+		clearFields: function(){
+			var fields, fieldsArray;
+			//queryelectorAll returns a list which we can't use, so we must convert it into an array
+			//normally we would use the slice method but we can use use that with an array, so we need to trick the program into thinking that we fed it an array
+			// we have to call the slice method using the call method then passing the fields variable into it
+			fields = document.querySelectorAll(DOMStrings.inputDescription + ', ' + DOMStrings.inputValue);
+			fieldsArray = Array.prototype.slice.call(fields)
+
+			fieldsArray.forEach(function(current, index, array){
+				current.value = "";
+			})
 		}
 	}
 
@@ -136,9 +149,7 @@ var UIController = (function(){
 var secondController = (function(budgetCtrl, UICtrl){
 	
 	var createEventListeners = function(){
-		var input, addItem;
-
-		input = UICtrl.getInput()
+		
 			document.querySelector(DOM.inputButton).addEventListener('click', ctrlAddItem);
 			ctrlAddItem();
 
@@ -146,11 +157,8 @@ var secondController = (function(budgetCtrl, UICtrl){
 
 			if (event.keyCode === 13 || event.which === 13){//keyCode works on recent browsers while 'which' works on older browsers
 				ctrlAddItem();
-			}
-			// console.log(event);
+			};
 		});
-
-		// UICtrl.addListItem(addItem, input.type).html = 'Hello';
 	}
 
 	var DOM = UICtrl.getDOMStrings();//this adds the DOMstrings object to this private function
@@ -167,11 +175,9 @@ var secondController = (function(budgetCtrl, UICtrl){
 		
 		//3. Add item to the UI
 		UICtrl.addListItem(addItem, input.type)
-		// if(input.type === "inc"){
-		// 	document.querySelector('.item__description').innerHTML = input.description;
-		// 	document.querySelector('.item__description').innerHTML = input.description;
-		// }
-		// console.log(input.description);
+		
+		//4. Clear the fields
+		UICtrl.clearFields();
 		//4. Calculate budget
 		//5. Display budget on UI
 	}
